@@ -2,7 +2,7 @@
 import numpy as np
 from utils.calculation_utils import yaw_diff_nomalized
 from utils.airsim_plotting import draw_text
-from utils.airsim_interactions import to_vec3r
+from utils.airsim_utils import to_vec3r
 import math
 
 def computeReward(client, episodeLog, distance_now, goal_rad, cur_pry, cur_pos):
