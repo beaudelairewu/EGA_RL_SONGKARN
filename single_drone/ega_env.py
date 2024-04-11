@@ -22,15 +22,15 @@ from utils.calculation_utils import (
     spawn_random_position_xy,
     normalize_action
 )
-from utils.log_utils import episodeLog_to_file, write_txt
+# from utils.log_utils import episodeLog_to_file, write_txt
 from utils.airsim_plotting import draw_actionRad_goalRad_2D
 
 
 class EgaEnv(gym.Env):
-    def __init__(self, client_id, date_time):
-        self.client_id = client_id
-        self.vehicle_name = f"Drone{client_id}"
-        self.log_dir = f"train/{date_time}/logs{date_time}"
+    def __init__(self):
+        # self.log_dir = f"train/{date_time}/logs{date_time}"
+        self.vehicle_name = "Drone0"
+        self.client = airsim.MultirotorClient()
         self.box_min = (-39.5, -39.5, 1.6)
         self.box_max = (39.5, 39.5, -40)
         self.start, self.goal = self.reset_start(self.box_min, self.box_max)
@@ -38,7 +38,7 @@ class EgaEnv(gym.Env):
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
             "distance_from_goal": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-            "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
+            # "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_position": spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_yaw": spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32), #radian get_pitch_roll_yaw
             "goal_direction" : spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32) # yaw angle that points to goal (radian) goal_direction_2d
@@ -58,21 +58,12 @@ class EgaEnv(gym.Env):
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         
-        self.color = {
-            0: "red",
-            1: "green",
-            2: "blue"
-        }
-        
         
     def reset(self, seed=None):
         print(f"[{self.color[self.client_id]}]resetting env ------------------------ {self.vehicle_name}----------------------------[/{self.color[self.client_id]}]")
-        self.client = airsim.MultirotorClient()
-        if self.episodeN == 0:
-            self.client = airsim_init(self.vehicle_name)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
-        episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
+        # episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
         self.reset_episode_log(self.state, self.start)
         self.log_ep += 1
         self.episodeN += 1
@@ -86,7 +77,6 @@ class EgaEnv(gym.Env):
         cur_pry = get_pitch_roll_yaw(self.client, self.vehicle_name)
         goal_rad = goal_direction_2d(self.goal, cur_pos, cur_pry)
         distance = distance_3d(cur_pos, self.goal)
-        # distance, cur_pos, cur_pry, goal_rad = get_observations(self.client, self.vehicle_name, self.goal)
         
         # draw_direction_arrow_2D(self.client, cur_pry, goal_rad, cur_pos)
         draw_actionRad_goalRad_2D(self.client, cur_pos, action[0], goal_rad)
@@ -139,7 +129,7 @@ class EgaEnv(gym.Env):
         self.state = {
                 'depth_image' : np.zeros((56, 100, 1), dtype=np.uint8),  
                 'distance_from_goal' : np.array([distance_3d(start, goal)], dtype=np.float32),
-                "goal_position": np.array(goal, dtype=np.float32), 
+                # "goal_position": np.array(goal, dtype=np.float32), 
                 'current_position': np.array(start, dtype=np.float32),
                 "current_yaw": np.array([0.0], dtype=np.float32), 
                 "goal_direction": np.array([goal_direction_2d(goal, start, (0,0,0))], dtype=np.float32)
@@ -165,6 +155,6 @@ class EgaEnv(gym.Env):
         a, b = spawn_random_position_xy(box_min, box_max)
         c, d = spawn_random_position_xy(box_min, box_max)
         start = (a, b, -4.0)
-        goal = (c, d, -4.0)
+        goal = (38, 38, -4.0)
         
         return start, goal
