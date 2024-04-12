@@ -63,11 +63,12 @@ def directional_angle(current: tuple, goal: tuple) -> float:
 
     return directional_yaw_degrees
 
+#tested 12.04.24
 def yaw_diff_nomalized(cur_yaw, desired_yaw): # eg. 300 deg to 60 deg
     angle = desired_yaw - cur_yaw
-    while angle > 3.14:
+    if angle > 3.14:
         angle -= 6.28
-    while angle < -3.14:
+    elif angle < -3.14:
         angle += 6.28
     return angle
 

@@ -1,7 +1,7 @@
 import logging
 import json
 import os
-
+import datetime
 
 def get_log_data(log_dir) -> list: 
     with open(f'{log_dir}/', 'r') as file:
@@ -50,5 +50,15 @@ def write_txt(episodeLog, logdir, vehicle_name, log_ep, episodeN):
         with open(file_path, "a") as file:
             file.write(episodeLog)
     
-    
-    
+
+def make_episodeLog_folder():
+    now = datetime.datetime.now()
+    formatted_datetime = now.strftime("%d.%m.%y-%H.%M") #02.04.24-10.35 
+    try:
+        os.mkdir(f'/Users/EGA/Documents/GitHub/AI_logs/episodeLogs/{formatted_datetime}')  
+    except FileExistsError:
+        print("Directory already exists")
+        
+    tmp_path = f"/Users/EGA/Documents/GitHub/AI_logs/episodeLogs/{formatted_datetime}"
+
+    return tmp_path
