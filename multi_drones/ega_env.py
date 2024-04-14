@@ -67,6 +67,14 @@ class EgaEnv(gym.Env):
             5: "cyan",
             6: "orange",
             7: "purple",
+            8: "red",
+            9: "green",
+            10: "blue",
+            11: "white",
+            12: "yellow",
+            13: "cyan",
+            14: "orange",
+            15: "purple",
         }
         
         
@@ -136,7 +144,7 @@ class EgaEnv(gym.Env):
         if distance1 < 3:
             print("Yehhhhhhhhhh you've done it!")
             done = True
-            reward = 1200
+            reward = 400
         
             
         self.addToLog('reward', float(reward))
