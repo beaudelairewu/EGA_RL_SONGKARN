@@ -20,23 +20,23 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
     print("track_diff:  ", track_diff, "yaw_reward: ", yaw_rew)
 
     r +=  yaw_rew
-    r +=  5*distance_diff
+    r +=  10*distance_diff
 
-    draw_text(
-        client,
-        [
-            f"deg_diff: {math.degrees(track_diff)}", 
-            f"rew:  {yaw_rew}",
-            # f"dis_diff: {distance_diff}",
-            # f"dis_rew:  {dis_rew}"
-        ],
-        [
-            to_vec3r(cur_pos), 
-            to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.2)),
-            # to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.4)),
-            # to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.6)),
-        ]
-    )
+    # draw_text(
+    #     client,
+    #     [
+    #         f"deg_diff: {math.degrees(track_diff)}", 
+    #         f"rew:  {yaw_rew}",
+    #         # f"dis_diff: {distance_diff}",
+    #         # f"dis_rew:  {dis_rew}"
+    #     ],
+    #     [
+    #         to_vec3r(cur_pos), 
+    #         to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.2)),
+    #         # to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.4)),
+    #         # to_vec3r((cur_pos[0], cur_pos[1], cur_pos[2]+0.6)),
+    #     ]
+    # )
    
 
     if abs(distance_now - distance_before) < 0.001:

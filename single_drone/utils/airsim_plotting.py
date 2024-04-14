@@ -41,8 +41,8 @@ def draw_direction_arrow_2D(client, cur_pry, goal_rad, cur_pos):
     vec_goal = airsim.Vector3r(x + dgx, y + dgy, z)
     vec_cur_direc = airsim.Vector3r(x + dcx, y + dcy, z)
 
-    client.simPlotArrows([a], [vec_goal], color_rgba=[0,1,0], duration=10)
-    client.simPlotArrows([a], [vec_cur_direc], duration=10)
+    client.simPlotArrows([a], [vec_goal], color_rgba=[0,1,0], duration=2)
+    client.simPlotArrows([a], [vec_cur_direc], duration=2)
 
 def draw_goal_position(client, goal_pos):
     vec = airsim.Vector3r(goal_pos[0], goal_pos[1], goal_pos[2])
