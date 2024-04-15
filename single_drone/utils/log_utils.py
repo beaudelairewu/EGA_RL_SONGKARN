@@ -12,9 +12,9 @@ def get_log_data(log_dir) -> list:
     return json_array
 
 def episodeLog_to_file(episodeLog, logdir, vehicle_name, log_ep, episodeN):
-    print(f"============================={log_ep}============================{episodeN}==========================================")    
-
-    file_path = f'{logdir}/episodeLog_{vehicle_name}.txt'
+    print(f"============================={log_ep}============================{episodeN}==========================================") 
+       
+    file_path = f'{logdir}/episodeLogs/episodeLog_{vehicle_name}.txt'
     if not os.path.exists(file_path):
         # File doesn't exist, create it
         with open(file_path, 'w') as f:
@@ -53,12 +53,14 @@ def write_txt(episodeLog, logdir, vehicle_name, log_ep, episodeN):
 
 def make_episodeLog_folder():
     now = datetime.datetime.now()
-    formatted_datetime = now.strftime("%d.%m.%y-%H.%M") #02.04.24-10.35 
+    formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
+    base_dir = '/Users/noppa/Documents/AI_logs'
     try:
-        os.mkdir(f'/Users/noppa/Documents/GitHub/AI_logs/episodeLogs/{formatted_datetime}')  
+        os.makedirs(os.path.join('single', formatted_datetime, 'episodeLogs'))
+        os.makedirs(os.path.join('single', formatted_datetime, 'infoLogs'))
     except FileExistsError:
         print("Directory already exists")
         
-    tmp_path = f"/Users/noppa/Documents/GitHub/AI_logs/episodeLogs/{formatted_datetime}"
+    dir = os.path.join(base_dir, formatted_datetime)
 
-    return tmp_path
+    return dir

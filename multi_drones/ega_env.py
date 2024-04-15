@@ -4,6 +4,7 @@ from gymnasium.utils import seeding
 import numpy as np
 import airsim
 from rich import print
+import os
 
 from utils.get_depth_image import getScreenDepth
 from reward import computeReward
@@ -23,14 +24,15 @@ from utils.calculation_utils import (
     normalize_action
 )
 from utils.log_utils import episodeLog_to_file, write_txt
-from utils.airsim_plotting import draw_actionRad_goalRad_2D, draw_direction_arrow_2D
+from utils.airsim_plotting import draw_direction_arrow_2D
+
 
 
 class EgaEnv(gym.Env):
     def __init__(self, client_id, date_time):
         self.client_id = client_id
         self.vehicle_name = f"Drone{client_id}"
-        self.log_dir = f"train/{date_time}/logs{date_time}"
+        self.log_dir = os.path.join(dir, "episodeLogs")
         self.box_min = (-39.5, -39.5, 1.6)
         self.box_max = (39.5, 39.5, -40)
         self.start, self.goal = self.reset_start(self.box_min, self.box_max)
@@ -38,7 +40,7 @@ class EgaEnv(gym.Env):
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
             "distance_from_goal": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-            "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
+            # "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_position": spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_yaw": spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32), #radian get_pitch_roll_yaw
             "goal_direction" : spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32) # yaw angle that points to goal (radian) goal_direction_2d
@@ -48,7 +50,7 @@ class EgaEnv(gym.Env):
             low=np.array([-1, -1, -1]),  # low=np.array([-3.14, 3, 1]) vx, vy, duration
             high=np.array([1, 1, 1])    # high=np.array([3.14, 5, 3]) 
         )
-        
+
         self.state = {}
         self.episodeLog = {}
         self.episodeN = 0
@@ -68,13 +70,7 @@ class EgaEnv(gym.Env):
             6: "orange",
             7: "purple",
             8: "red",
-            9: "green",
-            10: "blue",
-            11: "white",
-            12: "yellow",
-            13: "cyan",
-            14: "orange",
-            15: "purple",
+            9: "green"
         }
         
         
@@ -99,30 +95,21 @@ class EgaEnv(gym.Env):
         cur_pos1 = get_current_position(self.client, self.vehicle_name)
         distance1 = distance_3d(cur_pos1, self.goal)
         bef_pry = get_pitch_roll_yaw(self.client, self.vehicle_name)
-        depth_im, skip = getScreenDepth(self.client, self.vehicle_name)
 
         #take action
         collisionInfo = direction_based_navigation_2D(self.client, self.vehicle_name, action)
 
         #get observations after taking action
+        depth_im, skip = getScreenDepth(self.client, self.vehicle_name)
         cur_pos = get_current_position(self.client, self.vehicle_name)
         cur_pry = get_pitch_roll_yaw(self.client, self.vehicle_name)
         goal_rad = goal_direction_2d(self.goal, cur_pos, cur_pry)
         distance2 = distance_3d(cur_pos, self.goal)
         
         draw_direction_arrow_2D(self.client, cur_pry, goal_rad, cur_pos)
-        draw_actionRad_goalRad_2D(self.client, cur_pos, action[0], goal_rad)
+        #draw_actionRad_goalRad_2D(self.client, cur_pos, action[0], goal_rad)
         
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
-        
-        self.state = {
-            'depth_image' : depth_im, #np array float32
-            "distance_from_goal": np.array([distance1], dtype=np.float32),
-            "goal_position": np.array(self.goal, dtype=np.float32),
-            "current_position": np.array(cur_pos, dtype=np.float32),
-            "current_yaw": np.array([cur_pry[2]], dtype=np.float32),
-            "goal_direction": np.array([goal_rad], dtype=np.float32)
-        }
         
         if collisionInfo.has_collided:
             done = True
@@ -141,27 +128,34 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-        if distance1 < 3:
+        if distance2 < 3:
             print("Yehhhhhhhhhh you've done it!")
             done = True
             reward = 400
-        
             
         self.addToLog('reward', float(reward))
         self.addToLog('action', list(action))
-        self.addToLog('distance_from_goal', float(distance1))
+        self.addToLog('distance_from_goal', float(distance2))
         self.addToLog('current_position', list(cur_pos))
         self.addToLog('current_pry', list(cur_pry))
         self.addToLog('goal_direction', float(goal_rad))
+
+        self.state = {
+            'depth_image' : depth_im, #np array float32
+            "distance_from_goal": np.array([distance2], dtype=np.float32),
+            #"goal_position": np.array(self.goal, dtype=np.float32),
+            "current_position": np.array(cur_pos, dtype=np.float32),
+            "current_yaw": np.array([cur_pry[2]], dtype=np.float32),
+            "goal_direction": np.array([goal_rad], dtype=np.float32)
+        }
         
-               
         return self.state, float(reward), done, False, self.state
             
     def reset_state(self, start, goal):
         self.state = {
                 'depth_image' : np.zeros((56, 100, 1), dtype=np.uint8),  
                 'distance_from_goal' : np.array([distance_3d(start, goal)], dtype=np.float32),
-                "goal_position": np.array(goal, dtype=np.float32), 
+                #"goal_position": np.array(goal, dtype=np.float32), 
                 'current_position': np.array(start, dtype=np.float32),
                 "current_yaw": np.array([0.0], dtype=np.float32), 
                 "goal_direction": np.array([goal_direction_2d(goal, start, (0,0,0))], dtype=np.float32)
