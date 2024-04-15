@@ -39,16 +39,16 @@ checkpoint_callback = CheckpointCallback(
 
 if __name__ == "__main__":
     envs = SubprocVecEnv([
-        lambda: EgaEnv(0, formatted_datetime), 
-        lambda: EgaEnv(1, formatted_datetime), 
-        lambda: EgaEnv(2, formatted_datetime), 
-        lambda: EgaEnv(3, formatted_datetime), 
-        lambda: EgaEnv(4, formatted_datetime), 
-        lambda: EgaEnv(5, formatted_datetime), 
-        lambda: EgaEnv(6, formatted_datetime), 
-        lambda: EgaEnv(7, formatted_datetime),
-        lambda: EgaEnv(8, formatted_datetime), 
-        lambda: EgaEnv(9, formatted_datetime)
+        lambda: EgaEnv(0, dir), 
+        lambda: EgaEnv(1, dir), 
+        lambda: EgaEnv(2, dir), 
+        lambda: EgaEnv(3, dir), 
+        lambda: EgaEnv(4, dir), 
+        lambda: EgaEnv(5, dir), 
+        lambda: EgaEnv(6, dir), 
+        lambda: EgaEnv(7, dir),
+        lambda: EgaEnv(8, dir), 
+        lambda: EgaEnv(9, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
     model = PPO("MultiInputPolicy", envs, n_steps=2048, batch_size=64, ent_coef=0.01) #n_steps=2048, batch_size=64)

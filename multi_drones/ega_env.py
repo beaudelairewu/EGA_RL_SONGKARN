@@ -29,7 +29,7 @@ from utils.airsim_plotting import draw_direction_arrow_2D
 
 
 class EgaEnv(gym.Env):
-    def __init__(self, client_id, date_time):
+    def __init__(self, client_id, dir):
         self.client_id = client_id
         self.vehicle_name = f"Drone{client_id}"
         self.log_dir = os.path.join(dir, "episodeLogs")
