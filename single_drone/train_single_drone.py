@@ -5,7 +5,11 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from ega_env import EgaEnv
 from utils.log_utils import make_episodeLog_folder
 
-tmp_path = "/Users/noppa/Documents/AI_logs/training_logs"
+import os
+
+dir = make_episodeLog_folder() #'/Users/noppa/Documents/AI_logs/02.04.24-1035 '
+
+tmp_path = os.path.join(dir, "infoLogs")
 new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
 
 
@@ -18,9 +22,8 @@ checkpoint_callback = CheckpointCallback(
   save_vecnormalize=False,
 )
 
-log_dir = make_episodeLog_folder()
-model = PPO("MultiInputPolicy", EgaEnv(log_dir), verbose=1, n_steps=2048, batch_size=64, tensorboard_log="/Users/noppa/Documents/AI_logs/tensorboard") #tensorboard_log="ppo_cur1_tensorboard"
+model = PPO("MultiInputPolicy", EgaEnv(dir), verbose=1, n_steps=2048, batch_size=64)#, tensorboard_log="/Users/noppa/Documents/AI_logs/tensorboard") #tensorboard_log="ppo_cur1_tensorboard"
 # model = PPO.load("checkpoints/cur1_2603_32508_steps", env=EgaEnv_Cur1())
-# model.set_logger(new_logger)
+model.set_logger(new_logger)
 model.learn(total_timesteps=1000000, progress_bar=True, callback=checkpoint_callback)
 

@@ -6,32 +6,33 @@ from utils.airsim_utils import to_vec3r
 import math
 from rich import print
 
-def computeReward(client, episodeLog, distance_now, goal_rad, cur_pry, cur_pos, client_id):
-    r = -2.0 # for doing nothing
-
-    distance_before = episodeLog['distance_from_goal'][-1]
+# reward as a result of taking actions
+def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_pos, client_id):
+    #r = -2.0 # for doing nothing
+    r = 0
     
-    track_diff = abs(yaw_diff_nomalized(cur_pry[2], goal_rad))
+    track_diff = abs(yaw_diff_nomalized(cur_pry[2], goal_rad)) # track_diff [0, pi]
 
     distance_diff = distance_before - distance_now # if closer + , further -
 
-    yaw_rew = linear_decrease(track_diff)
+    yaw_rew = yaw_reward(track_diff)
     # dis_rew = distance_reward(distance_diff, 10, distance_now)
 
-    rew_breakdown = {
-        "yaw_diff": yaw_rew,
-        "dis_diff": distance_diff
-    }
     color = {
         0: "red",
         1: "green",
-        2: "blue"
+        2: "blue",
+        3: "cyan",
+
     }
     
-    rew_breakdown = f"[{color[client_id]}]  yaw_diff: {yaw_rew}, dis_diff : {distance_diff} [/{color[client_id]}]]"
+    rew_breakdown = f"[{color[client_id]}]  track_diff:  {track_diff} yaw_reward: {yaw_rew} dis_diff : {distance_diff} [/{color[client_id]}]]"
+
+    # print("track_diff:  ", track_diff, "yaw_reward: ", yaw_rew)
+    print(rew_breakdown)
 
     r +=  yaw_rew
-    r +=  distance_diff
+    r +=  10*distance_diff
 
     # draw_text(
     #     client,
@@ -50,8 +51,6 @@ def computeReward(client, episodeLog, distance_now, goal_rad, cur_pry, cur_pos, 
     # )
    
 
-    print(rew_breakdown)
-
     if abs(distance_now - distance_before) < 0.001:
         r = r - 1.0
         print("not moving  -1  ")
@@ -59,6 +58,5 @@ def computeReward(client, episodeLog, distance_now, goal_rad, cur_pry, cur_pos, 
     return r 
 
 
-
-def linear_decrease(diff):
-    return (-10/(0.5*np.pi))*diff + 10
+def yaw_reward(diff):
+    return (-20/np.pi)*diff +10
