@@ -39,10 +39,13 @@ if __name__ == "__main__":
     envs = SubprocVecEnv([
         lambda: EgaEnv(0, dir), 
         lambda: EgaEnv(1, dir), 
-        lambda: EgaEnv(2, dir)
+        lambda: EgaEnv(2, dir),
+        lambda: EgaEnv(3, dir), 
+        lambda: EgaEnv(4, dir), 
+        lambda: EgaEnv(5, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
-    model = PPO("MultiInputPolicy", envs, n_steps=64, batch_size=32) #n_steps=2048, batch_size=64)
+    model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
 

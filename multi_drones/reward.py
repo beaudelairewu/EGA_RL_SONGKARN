@@ -22,8 +22,9 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
         0: "red",
         1: "green",
         2: "blue",
-        3: "cyan",
-
+        3: "yellow",
+        4: "cyan",
+        5: "magenta"
     }
     
     rew_breakdown = f"[{color[client_id]}]  track_diff:  {track_diff} yaw_reward: {yaw_rew} dis_diff : {distance_diff} [/{color[client_id]}]]"

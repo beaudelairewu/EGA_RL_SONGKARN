@@ -63,7 +63,10 @@ class EgaEnv(gym.Env):
         self.color = {
             0: "red",
             1: "green",
-            2: "blue"
+            2: "blue",
+            3: "yellow",
+            4: "cyan",
+            5: "magenta"
         }
         
         
@@ -179,6 +182,6 @@ class EgaEnv(gym.Env):
         a, b = spawn_random_position_xy(box_min, box_max)
         c, d = spawn_random_position_xy(box_min, box_max)
         start = (a, b, -4.0)
-        goal = (c, d, -4.0)
+        goal = (38, 38, -4.0)
         
         return start, goal
