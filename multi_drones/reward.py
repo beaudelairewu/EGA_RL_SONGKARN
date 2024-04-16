@@ -21,7 +21,7 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
     distance_diff = distance_before - distance_now # if closer + , further -
 
     yaw_rew = yaw_reward(before_track_diff,after_track_diff)
-    distance_rew = 10 * distance_diff
+    distance_rew = 10 * distance_diff - distance_now
 
     # dis_rew = distance_reward(distance_diff, 10, distance_now)
 
@@ -30,11 +30,7 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
 
     if abs(distance_now - distance_before) < 0.001:
         r = r - 1.0
-        print("not moving  -1  ")
-    
-    if abs(distance_now - distance_before) < 0.001:
-        r = r - 1.0
-        print("not moving  -1  ")
+        print(str(client_id)+"not moving  -1  ")
     folder_path = r"C:\Users\noppa\Documents\GitHub\AI_logs\rewLogs\\" + formatted_datetime + "\\"
 
     # Create the folder if it doesn't exist
