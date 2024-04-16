@@ -12,11 +12,12 @@ import os
 import sys
 
 continue_from = "15.04.24-1525_24000_steps"
+pref = continue_from.split("_")[0]
 
 base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
-dir = os.path.join(base_dir, f"{continue_from}-con-{formatted_datetime}")
+dir = os.path.join(base_dir, formatted_datetime)
 
 try:
     os.mkdir(dir)
@@ -37,7 +38,7 @@ checkpoint_callback = CheckpointCallback(
     save_vecnormalize=False
 )
 
-pref = continue_from.split("_")[0]
+
 model_path = os.path.join(base_dir, pref, "checkpoints",  continue_from)
 
 if __name__ == "__main__":
