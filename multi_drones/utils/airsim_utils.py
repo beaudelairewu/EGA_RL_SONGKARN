@@ -36,27 +36,23 @@ def get_pitch_roll_yaw(client, vehicle_name) -> tuple:
     return airsim.to_eularian_angles(ori) #pitch roll yaw (rad)
 
 def take_action(client, action, vehicle_name):
-    client.moveByVelocityZAsync(
-        float(action[0]),
-        float(action[1]),
-        -7,
-        float(action[2]),
-        airsim.DrivetrainType.ForwardOnly,
-        airsim.YawMode(False, 0),
-        vehicle_name=vehicle_name
-    )
+    client.moveByMotorPWMsAsync(
+        front_right_pwm = float(action[0]), 
+        rear_left_pwm = float(action[1]), 
+        front_left_pwm = float(action[2]), 
+        rear_right_pwm = float(action[3]), 
+        duration = 0.01, 
+        vehicle_name = vehicle_name)
 
 def direction_based_navigation_2D(client, vehicle_name, action):
-    #action[0] desired yaw_angle (radian) [-3.14, 3.14]
-    #action[1] speed [5, 15]
-    #action[2] duration [1,3]
-    vx = math.cos(action[0]) * action[1]
-    vy = math.sin(action[0]) * action[1]
-    client.moveByVelocityZAsync(
-        float(vx), float(vy), -4, float(action[2]),
-        airsim.DrivetrainType.ForwardOnly, airsim.YawMode(False, 0),
-        vehicle_name=vehicle_name
-    ).join()
+    print("--------------------------------runningPWM---------------------------------------")
+    client.moveByRollPitchYawThrottleAsync(
+        roll = float(action[0]), 
+        pitch = float(action[1]), 
+        yaw = float(action[2]), 
+        throttle = float(action[3]), 
+        duration = 0.1, 
+        vehicle_name = vehicle_name).join()
     collisionInfo = client.simGetCollisionInfo()
     if collisionInfo.has_collided and "Drone" in collisionInfo.object_name:
         collisionInfo.has_collided = False
