@@ -47,8 +47,8 @@ class EgaEnv(gym.Env):
         })
         
         self.action_space = spaces.Box( 
-            low=np.array([-1, -1, -1]),  # low=np.array([-3.14, 3, 1]) vx, vy, duration
-            high=np.array([1, 1, 1])    # high=np.array([3.14, 5, 3]) 
+            low=np.array([-1, -1, -1, -1]),  # low=np.array([0, 0, 0, 0) motor pwm
+            high=np.array([1, 1, 1, 1])    # high=np.array([1, 1, 1, 1]) 
         )
 
         self.state = {}
@@ -120,6 +120,10 @@ class EgaEnv(gym.Env):
             print("out of box")
             done = True
             reward = -600
+        elif len(action) >= 30:
+            print("too long")
+            done = True
+            reward = -200.0
         else:
             done = False
             #compute reward here
@@ -128,10 +132,11 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-        if distance2 < 3:
+        if distance2 < 0.5:
             print("Yehhhhhhhhhh you've done it!")
             done = True
             reward = 400
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
             
         self.addToLog('reward', float(reward))
         self.addToLog('action', list(action))
@@ -178,9 +183,7 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        a, b = spawn_random_position_xy(box_min, box_max)
-        c, d = spawn_random_position_xy(box_min, box_max)
-        start = (a, b, -4.0)
-        goal = (c, d, -4.0)
-        
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5.0)
+        print("Start:", start)
+        print("Goal:", goal)
         return start, goal
