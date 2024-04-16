@@ -110,7 +110,8 @@ class EgaEnv(gym.Env):
         #draw_actionRad_goalRad_2D(self.client, cur_pos, action[0], goal_rad)
         
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
-        
+        action_length = len(self.episodeLog.get('action', []))
+        print('====================',self.episodeLog.get('action', []))
         if collisionInfo.has_collided:
             done = True
             reward = -200.0
@@ -120,8 +121,8 @@ class EgaEnv(gym.Env):
             print("out of box")
             done = True
             reward = -600
-        elif len(action) >= 30:
-            print("too long")
+        elif action_length >= 30:
+            print("====================too long=========================")
             done = True
             reward = -200.0
         else:
@@ -132,7 +133,7 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-        if distance2 < 0.5:
+        if distance2 < 1:
             print("Yehhhhhhhhhh you've done it!")
             done = True
             reward = 400
