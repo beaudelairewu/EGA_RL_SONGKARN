@@ -11,7 +11,7 @@ import datetime
 import os
 import sys
 
-continue_from = "15.04.24-1525_24000_steps"
+continue_from = "16.04.24-2216_58800_steps"
 pref = continue_from.split("_")[0]
 
 base_dir = "/Users/noppa/Documents/AI_logs/multi_train"

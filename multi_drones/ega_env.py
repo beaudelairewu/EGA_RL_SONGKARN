@@ -131,7 +131,7 @@ class EgaEnv(gym.Env):
             done = True
             reward = 1200
         
-            
+        self.addToLog('episodeN', int(self.episodeN))
         self.addToLog('reward', float(reward))
         self.addToLog('action', list(action))
         self.addToLog('distance_from_goal', float(distance2))
