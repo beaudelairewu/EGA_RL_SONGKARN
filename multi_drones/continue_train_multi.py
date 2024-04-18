@@ -11,7 +11,7 @@ import datetime
 import os
 import sys
 
-continue_from = "16.04.24-2216_58800_steps"
+continue_from = "18.04.24-1608_6000_steps"
 pref = continue_from.split("_")[0]
 
 base_dir = "/Users/EGA/Documents/AI_logs/multi_train"
@@ -44,14 +44,10 @@ model_path = os.path.join(base_dir, pref, "checkpoints",  continue_from)
 if __name__ == "__main__":
     envs = SubprocVecEnv([
         lambda: EgaEnv(0, dir), 
-        lambda: EgaEnv(1, dir), 
-        lambda: EgaEnv(2, dir),
-        lambda: EgaEnv(3, dir), 
-        lambda: EgaEnv(4, dir), 
-        lambda: EgaEnv(5, dir)
+        lambda: EgaEnv(1, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
     # model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
-    model = PPO.load(model_path, envs, n_steps=1024, batch_size=64)
+    model = PPO.load(model_path, envs, n_steps=512, batch_size=128, ent_coef = 0.01)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)

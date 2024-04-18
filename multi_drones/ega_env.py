@@ -129,7 +129,7 @@ class EgaEnv(gym.Env):
 
         if distance2 < 1.5:
             done = True
-            self.success =+ 1
+            self.success += 1
             reward = 1200
             print("Yehhhhhhhhhh you've done it! ", self.success, ' times')
            # if action_length*3 >= 1300:
