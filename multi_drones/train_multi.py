@@ -12,7 +12,7 @@ import os
 import sys
 
 
-
+#18.04.24-1957
 base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 

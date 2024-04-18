@@ -12,7 +12,7 @@ now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M")
 
 def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, cur_pry, bef_pry, cur_pos, client_id):
-    r = -2.0
+    r = 10
     distance_before = episodeLog['distance_from_goal'][-1]
 
     before_track_diff = abs(yaw_diff_nomalized(bef_pry[2], goal_rad)) # track_diff [0, pi]
@@ -25,7 +25,7 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
 
     # dis_rew = distance_reward(distance_diff, 10, distance_now)
 
-    r +=  yaw_rew
+    #r +=  yaw_rew
     r +=  distance_rew
 
     if abs(distance_now - distance_before) < 0.001:
