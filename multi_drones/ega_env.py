@@ -47,8 +47,8 @@ class EgaEnv(gym.Env):
         })
         
         self.action_space = spaces.Box( 
-            low=np.array([-1, -1, -1, -1]),  # low=np.array([0, 0, 0, 0) motor pwm
-            high=np.array([1, 1, 1, 1])    # high=np.array([1, 1, 1, 1]) 
+            low=np.array([-1, -1, -1]),  # vx vy vz
+            high=np.array([1, 1, 1])    # 
         )
 
         self.state = {}

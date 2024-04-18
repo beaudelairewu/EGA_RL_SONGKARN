@@ -46,13 +46,14 @@ def take_action(client, action, vehicle_name):
 
 def direction_based_navigation_2D(client, vehicle_name, action):
     print("--------------------------------runningPWM---------------------------------------")
-    client.moveByRollPitchYawThrottleAsync(
-        roll = float(action[0]), 
-        pitch = float(action[1]), 
-        yaw = float(action[2]), 
-        throttle = float(action[3]), 
-        duration = 0.1, 
-        vehicle_name = vehicle_name).join()
+    client.moveByVelocityBodyFrameAsync(
+        vx=action[0],
+        vy=action[1], 
+        vz=action[2], 
+        duration=0.1, 
+        drivetrain=1, 
+        yaw_mode=airsim.YawMode(False, 0), 
+        vehicle_name=vehicle_name)
     collisionInfo = client.simGetCollisionInfo()
     if collisionInfo.has_collided and "Drone" in collisionInfo.object_name:
         collisionInfo.has_collided = False
