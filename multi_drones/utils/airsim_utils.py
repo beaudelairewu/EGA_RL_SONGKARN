@@ -47,9 +47,9 @@ def take_action(client, action, vehicle_name):
 def direction_based_navigation_2D(client, vehicle_name, action):
     print("--------------------------------runningPWM---------------------------------------")
     client.moveByVelocityBodyFrameAsync(
-        vx=action[0],
-        vy=action[1], 
-        vz=action[2], 
+        vx=float(action[0]),
+        vy=float(action[1]), 
+        vz=float(action[2]), 
         duration=0.1, 
         drivetrain=1, 
         yaw_mode=airsim.YawMode(False, 0), 
