@@ -5,6 +5,7 @@ import numpy as np
 import airsim
 from rich import print
 import os
+import time
 
 from utils.get_depth_image import getScreenDepth
 from reward import computeReward
@@ -59,6 +60,7 @@ class EgaEnv(gym.Env):
         self.log_ep = 0 
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
+        self.timer = time.time()
         
         self.color = {
             0: "red",
@@ -66,7 +68,11 @@ class EgaEnv(gym.Env):
             2: "blue",
             3: "yellow",
             4: "cyan",
-            5: "magenta"
+            5: "magenta",
+            6: "blue3",
+            7: "blue_violet",
+            8: "light_slate_grey",
+            9: "deep_pink4" 
         }
         
         
@@ -81,6 +87,7 @@ class EgaEnv(gym.Env):
         self.reset_episode_log(self.state, self.start)
         self.log_ep += 1
         self.episodeN += 1
+        self.color = self.color - time.time()
         
         return self.state, self.state
     

@@ -11,7 +11,7 @@ import datetime
 import os
 import sys
 
-continue_from = "16.04.24-2216_58800_steps"
+continue_from = "17.04.24-1115_142800_steps"
 pref = continue_from.split("_")[0]
 
 base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
@@ -48,7 +48,8 @@ if __name__ == "__main__":
         lambda: EgaEnv(2, dir),
         lambda: EgaEnv(3, dir), 
         lambda: EgaEnv(4, dir), 
-        lambda: EgaEnv(5, dir)
+        lambda: EgaEnv(5, dir),
+        lambda: EgaEnv(6, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
     # model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
