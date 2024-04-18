@@ -40,7 +40,7 @@ class EgaEnv(gym.Env):
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
             "distance_from_goal": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-            # "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
+            "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_position": spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_yaw": spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32), #radian get_pitch_roll_yaw
             "goal_direction" : spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32) # yaw angle that points to goal (radian) goal_direction_2d
@@ -157,7 +157,7 @@ class EgaEnv(gym.Env):
         self.state = {
             'depth_image' : depth_im, #np array float32
             "distance_from_goal": np.array([distance2], dtype=np.float32),
-            #"goal_position": np.array(self.goal, dtype=np.float32),
+            "goal_position": np.array(self.goal, dtype=np.float32),
             "current_position": np.array(cur_pos, dtype=np.float32),
             "current_yaw": np.array([cur_pry[2]], dtype=np.float32),
             "goal_direction": np.array([goal_rad], dtype=np.float32)
@@ -169,7 +169,7 @@ class EgaEnv(gym.Env):
         self.state = {
                 'depth_image' : np.zeros((56, 100, 1), dtype=np.uint8),  
                 'distance_from_goal' : np.array([distance_3d(start, goal)], dtype=np.float32),
-                #"goal_position": np.array(goal, dtype=np.float32), 
+                "goal_position": np.array(goal, dtype=np.float32), 
                 'current_position': np.array(start, dtype=np.float32),
                 "current_yaw": np.array([0.0], dtype=np.float32), 
                 "goal_direction": np.array([goal_direction_2d(goal, start, (0,0,0))], dtype=np.float32)
