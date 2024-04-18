@@ -15,7 +15,7 @@ def read_data(file_path):
     return data
 
 def plot_2D(samples):
-    n_cols = 3
+    n_cols = 4
     n_rows = math.ceil(len(samples)/n_cols)
     print(n_rows)
     fig, axes = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=(10, 10))

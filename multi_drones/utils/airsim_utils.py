@@ -52,10 +52,14 @@ def direction_based_navigation_2D(client, vehicle_name, action):
     #action[2] duration [1,3]
     vx = math.cos(action[0]) * action[1]
     vy = math.sin(action[0]) * action[1]
+
+    start_time = time.time()
+
     client.moveByVelocityZAsync(
         float(vx), float(vy), -4, float(action[2]),
         airsim.DrivetrainType.ForwardOnly, airsim.YawMode(False, 0),
         vehicle_name=vehicle_name
-    ).join()
-    collisionInfo = client.simGetCollisionInfo()
+    )
+    while time.time() - start_time < action[2]:
+        collisionInfo = client.simGetCollisionInfo()
     return collisionInfo

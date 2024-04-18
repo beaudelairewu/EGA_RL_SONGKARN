@@ -15,7 +15,7 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
 
     distance_diff = distance_before - distance_now # if closer + , further -
 
-    yaw_rew = yaw_reward(track_diff)
+    yaw_rew = yaw_reward_2(track_diff)
     # dis_rew = distance_reward(distance_diff, 10, distance_now)
 
     color = {
@@ -24,7 +24,11 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
         2: "blue",
         3: "yellow",
         4: "cyan",
-        5: "magenta"
+        5: "magenta",
+        6: "blue3",
+        7: "blue_violet",
+        8: "light_slate_grey",
+        9: "deep_pink4" 
     }
     
     rew_breakdown = f"[{color[client_id]}]  track_diff:  {track_diff} yaw_reward: {yaw_rew} dis_diff : {distance_diff} [/{color[client_id]}]]"
@@ -61,3 +65,6 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
 
 def yaw_reward(diff):
     return (-20/np.pi)*diff +10
+
+def yaw_reward_2(diff):
+    return -5*(diff**2)+10
