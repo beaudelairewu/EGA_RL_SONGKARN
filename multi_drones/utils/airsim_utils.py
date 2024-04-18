@@ -47,15 +47,18 @@ def take_action(client, action, vehicle_name):
     )
 
 def direction_based_navigation_2D(client, vehicle_name, action):
-    #action[0] desired yaw_angle (radian) [-3.14, 3.14]
-    #action[1] speed [5, 15]
-    #action[2] duration [1,3]
-    vx = math.cos(action[0]) * action[1]
-    vy = math.sin(action[0]) * action[1]
-    client.moveByVelocityZAsync(
-        float(vx), float(vy), -4, float(action[2]),
-        airsim.DrivetrainType.ForwardOnly, airsim.YawMode(False, 0),
-        vehicle_name=vehicle_name
-    ).join()
+    print('========actions==========',action)
+    client.moveByMotorPWMsAsync(
+        front_right_pwm = float(action[0]), 
+        rear_left_pwm = float(action[1]), 
+        front_left_pwm = float(action[2]) , 
+        rear_right_pwm = float(action[3]), 
+        duration = 0.01, 
+        vehicle_name=vehicle_name)
     collisionInfo = client.simGetCollisionInfo()
-    return collisionInfo
+    if collisionInfo.has_collided and "Drone" in collisionInfo.object_name:
+        collisionInfo.has_collided = False
+        print('=============collided with a drone but doesnt count lol',collisionInfo)
+        return collisionInfo
+    else:
+        return collisionInfo

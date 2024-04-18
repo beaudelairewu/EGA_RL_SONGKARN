@@ -14,7 +14,7 @@ import sys
 continue_from = "16.04.24-2216_58800_steps"
 pref = continue_from.split("_")[0]
 
-base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
+base_dir = "/Users/EGA/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
 dir = os.path.join(base_dir, formatted_datetime)
@@ -55,4 +55,3 @@ if __name__ == "__main__":
     model = PPO.load(model_path, envs, n_steps=1024, batch_size=64)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
-

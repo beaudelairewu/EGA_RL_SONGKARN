@@ -56,6 +56,7 @@ class EgaEnv(gym.Env):
         self.episodeN = 0
         self.stepN = 0
         self.log_ep = 0 
+        self.succcess = 0
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         
@@ -78,9 +79,9 @@ class EgaEnv(gym.Env):
         #get distance before taking action
         cur_pos1 = get_current_position(self.client, self.vehicle_name)
         distance1 = distance_3d(cur_pos1, self.goal)
-
+        bef_pry = get_pitch_roll_yaw(self.client, self.vehicle_name)
         #take action
-        collisionInfo = direction_based_navigation_2D(self.client, self.vehicle_name, action) #observation as a result of taking an action
+        collisionInfo = direction_based_navigation_2D(self.client, self.vehicle_name, action)
                 
         #get observations after taking action
         depth_im, skip = getScreenDepth(self.client, self.vehicle_name)
@@ -88,9 +89,6 @@ class EgaEnv(gym.Env):
         cur_pry = get_pitch_roll_yaw(self.client, self.vehicle_name)
         goal_rad = goal_direction_2d(self.goal, cur_pos, cur_pry)
         distance2 = distance_3d(cur_pos, self.goal)
-        
-        #draw current yaw and goal's direction
-        draw_direction_arrow_2D(self.client, cur_pry, goal_rad, cur_pos)
 
         #check if drone is out of training area
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
@@ -109,7 +107,7 @@ class EgaEnv(gym.Env):
         else:
             done = False
             #compute reward here
-            reward = computeReward(self.client, distance1, distance2, goal_rad, cur_pry, cur_pos)
+            reward = computeReward(self.client, self.episodeLog, distance1, distance2, goal_rad, cur_pry, bef_pry, cur_pos)
             # print(f"distance_from_goal:  {distance}     ")
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")

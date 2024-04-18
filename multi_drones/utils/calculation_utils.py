@@ -7,9 +7,10 @@ def normalize(x, _from: tuple, _to=(-1, 1)):
     return ((x - _from[0]) / (_from[1] - _from[0])) * (_to[1] - _to[0]) + _to[0]
 
 def normalize_action(action):
-    action[0] = normalize(action[0], (-1,1), (-3.14, 3.14)) #yaw
-    action[1] = normalize(action[1], (-1,1), (3,5)) #speed
-    action[2] = normalize(action[2], (-1,1), (1,3)) #duration
+    action[0] = normalize(action[0], (-1,1), (0,1)) #yaw
+    action[1] = normalize(action[1], (-1,1), (0,1)) #speed
+    action[2] = normalize(action[2], (-1,1), (0,1)) #duration
+    action[3] = normalize(action[3], (-1,1), (0,1)) #duration
     return action
 
 def is_out_of_box(now: tuple, min: tuple, max: tuple) -> bool:

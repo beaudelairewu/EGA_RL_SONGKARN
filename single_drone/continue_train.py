@@ -11,7 +11,7 @@ import datetime
 import os
 import sys
 
-continue_from = "cur1_1304_255000_steps"
+continue_from = "cur1_1304_185000_steps"
 pref = continue_from.split("_")[0]
 
 base_dir = "/Users/EGA/Documents/AI_logs/"

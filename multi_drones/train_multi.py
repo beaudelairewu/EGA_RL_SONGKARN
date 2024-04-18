@@ -11,7 +11,7 @@ import datetime
 import os
 import sys
 
-base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
+base_dir = "/Users/EGA/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
 dir = os.path.join(base_dir, formatted_datetime)
@@ -38,14 +38,9 @@ checkpoint_callback = CheckpointCallback(
 if __name__ == "__main__":
     envs = SubprocVecEnv([
         lambda: EgaEnv(0, dir), 
-        lambda: EgaEnv(1, dir), 
-        lambda: EgaEnv(2, dir),
-        lambda: EgaEnv(3, dir), 
-        lambda: EgaEnv(4, dir), 
-        lambda: EgaEnv(5, dir)
+        lambda: EgaEnv(1, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
-    model = PPO("MultiInputPolicy", envs, n_steps=512, batch_size=128) #n_steps=2048, batch_size=64)
+    model = PPO("MultiInputPolicy", envs, n_steps=512, batch_size=128, ent_coef = 0.01) #n_steps=2048, batch_size=64)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
-
