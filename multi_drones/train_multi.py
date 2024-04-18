@@ -40,9 +40,7 @@ if __name__ == "__main__":
         lambda: EgaEnv(0, dir), 
         lambda: EgaEnv(1, dir), 
         lambda: EgaEnv(2, dir),
-        lambda: EgaEnv(3, dir), 
-        lambda: EgaEnv(4, dir), 
-        lambda: EgaEnv(5, dir)
+        lambda: EgaEnv(3, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
     model = PPO("MultiInputPolicy", envs, n_steps=256, batch_size=64, ent_coef=0.01) #n_steps=2048, batch_size=64)
