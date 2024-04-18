@@ -76,6 +76,7 @@ class EgaEnv(gym.Env):
         if self.episodeN == 0:
             self.client = airsim_init(self.vehicle_name)
         if self.success >= 10:
+            self.success = 0
             self.start, self.goal = self.reset_start(self.box_min, self.box_max)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
