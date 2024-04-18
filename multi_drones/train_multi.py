@@ -45,6 +45,6 @@ if __name__ == "__main__":
         lambda: EgaEnv(3, dir)
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
-    model = PPO("MultiInputPolicy", envs, n_steps=512, batch_size=16, ent_coef=0.01) #n_steps=2048, batch_size=64)
+    model = PPO("MultiInputPolicy", envs, n_steps=256, batch_size=64, ent_coef=0.01) #n_steps=2048, batch_size=64)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)

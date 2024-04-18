@@ -57,6 +57,7 @@ class EgaEnv(gym.Env):
         self.stepN = 0
         self.client = None
         self.log_ep = 0 
+        self.success = 0
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         
@@ -79,6 +80,9 @@ class EgaEnv(gym.Env):
         self.client = airsim.MultirotorClient()
         if self.episodeN == 0:
             self.client = airsim_init(self.vehicle_name)
+        if self.success >= 10:
+            self.success = 0
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
         episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
@@ -106,7 +110,6 @@ class EgaEnv(gym.Env):
         goal_rad = goal_direction_2d(self.goal, cur_pos, cur_pry)
         distance2 = distance_3d(cur_pos, self.goal)
         
-        draw_direction_arrow_2D(self.client, cur_pry, goal_rad, cur_pos)
         #draw_actionRad_goalRad_2D(self.client, cur_pos, action[0], goal_rad)
         
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
@@ -114,17 +117,13 @@ class EgaEnv(gym.Env):
         print('====================',self.episodeLog.get('action', []))
         if collisionInfo.has_collided:
             done = True
-            reward = -200.0
+            reward = -400.0
             print(f"collided")
             print(f"object:     {collisionInfo.object_name}")
         elif out_of_box:
             print("out of box")
             done = True
-            reward = -600
-        elif action_length >= 30:
-            print("====================too long=========================")
-            done = True
-            reward = -200.0
+            reward = -400
         else:
             done = False
             #compute reward here
@@ -132,12 +131,21 @@ class EgaEnv(gym.Env):
             # print(f"distance_from_goal:  {distance}     ")
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
-
-        if distance2 < 1:
-            print("Yehhhhhhhhhh you've done it!")
+        """ elif action_length >= 30:
+            print("====================too long=========================")
             done = True
-            reward = 400
-            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
+            reward = -200.0 """
+
+        if distance2 < 1.5:
+            done = True
+            self.success += 1
+            reward = 1200
+            print("Yehhhhhhhhhh you've done it! ", self.success, ' times')
+            # if action_length*3 >= 1300:
+            #     print('did well but too long duh')
+            #     reward = -100
+            # else:
+            #     reward = 1200-(action_length*3)
             
         self.addToLog('reward', float(reward))
         self.addToLog('action', list(action))

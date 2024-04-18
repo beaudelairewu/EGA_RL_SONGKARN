@@ -33,7 +33,7 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
         print(str(client_id)+"not moving  -1  ")
     folder_path = r"C:\Users\noppa\Documents\GitHub\AI_logs\rewLogs\\" + formatted_datetime + "\\"
 
-    # Create the folder if it doesn't exist
+    """ # Create the folder if it doesn't exist
     try:
         os.makedirs(folder_path)
         print(f"Folder '{folder_path}' created successfully.")
@@ -71,7 +71,7 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
 
         # Write the concatenated DataFrame back to the Excel file
         df.to_excel(log_dir, index=False)
-        print(f"Data appended to '{log_dir}' successfully.")
+        print(f"Data appended to '{log_dir}' successfully.") """
     return r 
 
 
