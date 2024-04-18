@@ -31,7 +31,7 @@ tmp_path = os.path.join(dir, "infoLogs")
 new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
 
 checkpoint_callback = CheckpointCallback(
-    save_freq=100,
+    save_freq=400,
     save_path= os.path.join(dir, "checkpoints"),
     name_prefix=f"{formatted_datetime}",
     save_replay_buffer=False,
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         ])
     envs = VecMonitor(envs, os.path.join(dir, "infoLogs"))
     # model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
-    model = PPO.load(model_path, envs, n_steps=1024, batch_size=64)
+    model = PPO.load(model_path, envs, n_steps=256, batch_size=64, ent_coef=0.01)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
 
