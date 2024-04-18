@@ -39,7 +39,7 @@ class EgaEnv(gym.Env):
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
             "distance_from_goal": spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32),
-            # "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
+            "goal_position":  spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_position": spaces.Box(low=-np.inf, high=np.inf, shape=(3,), dtype=np.float32), 
             "current_yaw": spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32), #radian get_pitch_roll_yaw
             "goal_direction" : spaces.Box(low=-3.14, high=3.14, shape=(1,), dtype=np.float32) # yaw angle that points to goal (radian) goal_direction_2d
@@ -56,6 +56,7 @@ class EgaEnv(gym.Env):
         self.stepN = 0
         self.client = None
         self.log_ep = 0 
+        self.success = 0
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         
@@ -74,6 +75,8 @@ class EgaEnv(gym.Env):
         self.client = airsim.MultirotorClient()
         if self.episodeN == 0:
             self.client = airsim_init(self.vehicle_name)
+        if self.success >= 10:
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
         episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
@@ -123,10 +126,11 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-        if distance2 < 3:
-            print("Yehhhhhhhhhh you've done it!")
+        if distance2 < 1.5:
             done = True
+            self.success =+ 1
             reward = 1200
+            print("Yehhhhhhhhhh you've done it! ", self.success, ' times')
            # if action_length*3 >= 1300:
            #     print('did well but too long duh')
            #     reward = -100
@@ -146,7 +150,7 @@ class EgaEnv(gym.Env):
         self.state = {
             'depth_image' : depth_im, #np array float32
             "distance_from_goal": np.array([distance2], dtype=np.float32),
-            # "goal_position": np.array(self.goal, dtype=np.float32),
+            "goal_position": np.array(self.goal, dtype=np.float32),
             "current_position": np.array(cur_pos, dtype=np.float32),
             "current_yaw": np.array([cur_pry[2]], dtype=np.float32),
             "goal_direction": np.array([goal_rad], dtype=np.float32)
@@ -159,7 +163,7 @@ class EgaEnv(gym.Env):
         self.state = {
                 'depth_image' : np.zeros((56, 100, 1), dtype=np.uint8),  
                 'distance_from_goal' : np.array([distance_3d(start, goal)], dtype=np.float32),
-                # "goal_position": np.array(goal, dtype=np.float32), 
+                "goal_position": np.array(goal, dtype=np.float32), 
                 'current_position': np.array(start, dtype=np.float32),
                 "current_yaw": np.array([0.0], dtype=np.float32), 
                 "goal_direction": np.array([goal_direction_2d(goal, start, (0,0,0))], dtype=np.float32)
@@ -182,9 +186,7 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        a, b = spawn_random_position_xy(box_min, box_max)
-        c, d = spawn_random_position_xy(box_min, box_max)
-        start = (0, 0, -4.0)
-        goal = (10, 0, -4.0)
-        
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (35, 35, -40), 5)
+        print("Start:", start)
+        print("Goal:", goal)
         return start, goal

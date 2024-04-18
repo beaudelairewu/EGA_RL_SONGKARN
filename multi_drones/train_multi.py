@@ -22,13 +22,14 @@ try:
     os.mkdir(os.path.join(dir, "checkpoints"))
     os.mkdir(os.path.join(dir, "infoLogs"))
 except:
-    print('dir exists')
+    print('s')
+
 
 tmp_path = os.path.join(dir, "infoLogs")
 new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
 
 checkpoint_callback = CheckpointCallback(
-    save_freq=100,
+    save_freq=500,
     save_path= os.path.join(dir, "checkpoints"),
     name_prefix=f"{formatted_datetime}",
     save_replay_buffer=False,
