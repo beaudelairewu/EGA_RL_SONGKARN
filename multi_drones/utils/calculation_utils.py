@@ -7,9 +7,10 @@ def normalize(x, _from: tuple, _to=(-1, 1)):
     return ((x - _from[0]) / (_from[1] - _from[0])) * (_to[1] - _to[0]) + _to[0]
 
 def normalize_action(action):
-    action[0] = normalize(action[0], (-1,1), (-3.14, 3.14)) #yaw
-    action[1] = normalize(action[1], (-1,1), (3,5)) #speed
-    action[2] = normalize(action[2], (-1,1), (1,3)) #duration
+    action[0] = normalize(action[0], (-1,1), (-3.14, 3.14)) #pry
+    action[1] = normalize(action[1], (-1,1), (-3.14, 3.14)) #pry
+    action[2] = normalize(action[2], (-1,1), (-3.14, 3.14)) #pry
+    action[3] = normalize(action[3], (-1,1), (0, 1)) #motor pwm
     return action
 
 def is_out_of_box(now: tuple, min: tuple, max: tuple) -> bool:
@@ -21,12 +22,21 @@ def is_out_of_box(now: tuple, min: tuple, max: tuple) -> bool:
     else:
         return True
 
-def spawn_random_position_xy(min: tuple, max: tuple) -> tuple:
-    x_min, y_min, z_min = min
-    x_max, y_max, z_max = max
-    rand_x = random.uniform(x_min, x_max)
-    rand_y = random.uniform(y_min, y_max)
-    return (rand_x, rand_y)
+def spawn_random_position_xy(min_pos: tuple, max_pos: tuple, max_distance: float) -> tuple:
+    x_min, y_min, z_min = min_pos
+    x_max, y_max, z_max = max_pos
+    
+    while True:
+        start_x = random.uniform(x_min, x_max)
+        start_y = random.uniform(y_min, y_max)
+        goal_x = random.uniform(x_min, x_max)
+        goal_y = random.uniform(y_min, y_max)
+        
+        distance = math.sqrt((start_x - goal_x)**2 + (start_y - goal_y)**2)
+        rounded_distance = round(distance, 2)
+        
+        if rounded_distance == round(max_distance, 2):
+            return ((start_x, start_y, -4.0), (goal_x, goal_y, -4.0))
 
 def distance_2d(point1: tuple, point2: tuple) -> float:
     x1, y1 = point1
