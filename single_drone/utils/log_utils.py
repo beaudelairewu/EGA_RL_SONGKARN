@@ -54,13 +54,9 @@ def write_txt(episodeLog, logdir, vehicle_name, log_ep, episodeN):
 def make_episodeLog_folder():
     now = datetime.datetime.now()
     formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
-    base_dir = '/Users/noppa/Documents/AI_logs'
-    try:
-        os.makedirs(os.path.join('single', formatted_datetime, 'episodeLogs'))
-        os.makedirs(os.path.join('single', formatted_datetime, 'infoLogs'))
-    except FileExistsError:
-        print("Directory already exists")
-        
+    base_dir = '/Users/EGA/Documents/AI_logs'
+    os.makedirs(os.path.join(base_dir, formatted_datetime, 'episodeLogs'))
+    os.makedirs(os.path.join(base_dir, formatted_datetime, 'infoLogs'))
     dir = os.path.join(base_dir, formatted_datetime)
 
     return dir

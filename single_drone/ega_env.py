@@ -47,8 +47,8 @@ class EgaEnv(gym.Env):
         })
         
         self.action_space = spaces.Box( 
-            low=np.array([-1, -1, -1]),  # low=np.array([-3.14, 3, 1]) vx, vy, duration
-            high=np.array([1, 1, 1])    # high=np.array([3.14, 5, 3]) 
+            low=np.array([-1, -1, -1, -1]),  # low=np.array([-3.14, 3, 1]) vx, vy, duration
+            high=np.array([1, 1, 1, 1])    # high=np.array([3.14, 5, 3]) 
         )
         
         self.state = {}
@@ -94,17 +94,18 @@ class EgaEnv(gym.Env):
 
         #check if drone is out of training area
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
-        
+        action_length = len(self.episodeLog.get('action',[]))
+        print('==============action_length==============',action_length)
         #compute reward as a result of taking action
         if collisionInfo.has_collided:
             done = True
-            reward = -200.0
+            reward = -400.0
             print(f"collided")
             print(f"object:     {collisionInfo.object_name}")
         elif out_of_box:
             print("out of box")
             done = True
-            reward = -0
+            reward = -400
         else:
             done = False
             #compute reward here
@@ -116,7 +117,12 @@ class EgaEnv(gym.Env):
         if distance2 < 3:
             print("Yehhhhhhhhhh you've done it!")
             done = True
-            reward = 1200
+            if action_length*3 >= 1300:
+                print('did well but too long duh')
+                reward = -100
+            else:
+                reward = 1200-(action_length*3)
+            
         
             
         self.addToLog('reward', float(reward))
@@ -167,9 +173,9 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        a, b = spawn_random_position_xy(box_min, box_max)
-        c, d = spawn_random_position_xy(box_min, box_max)
-        start = (0, 0, -4.0)
-        goal = (38, 38, -4.0)
+        a, b = spawn_random_position_xy((-30, -30, 1.6), (30, 30, -40))
+        c, d = spawn_random_position_xy((-30, -30, 1.6), (30, 30, -40))
+        start = (a, b, -4.0)
+        goal = (c, d, -4.0)
         
         return start, goal
