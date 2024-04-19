@@ -61,7 +61,7 @@ def direction_based_navigation_2D(client, vehicle_name, action):
         vehicle_name=vehicle_name
     )
     while time.time() - start_time < action[2]:
-        collisionInfo = client.simGetCollisionInfo()
+        collisionInfo = client.simGetCollisionInfo(vehicle_name=vehicle_name)
         if collisionInfo.has_collided == True:
             return collisionInfo
     return collisionInfo

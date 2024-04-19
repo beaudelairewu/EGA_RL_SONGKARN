@@ -87,7 +87,6 @@ class EgaEnv(gym.Env):
         self.reset_episode_log(self.state, self.start)
         self.log_ep += 1
         self.episodeN += 1
-        self.color = self.color - time.time()
         
         return self.state, self.state
     

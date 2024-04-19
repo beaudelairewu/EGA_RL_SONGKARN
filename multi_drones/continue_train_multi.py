@@ -11,10 +11,11 @@ import datetime
 import os
 import sys
 
-continue_from = "17.04.24-1115_142800_steps"
+from device_setting import get_device_setting
+
+base_dir, continue_from = get_device_setting()
 pref = continue_from.split("_")[0]
 
-base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
 dir = os.path.join(base_dir, formatted_datetime)
