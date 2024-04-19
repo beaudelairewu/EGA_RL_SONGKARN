@@ -23,8 +23,8 @@ from utils.calculation_utils import (
     spawn_random_position_xy,
     normalize_action
 )
-from utils.log_utils import episodeLog_to_file, write_txt
-from utils.airsim_plotting import draw_direction_arrow_2D
+#from utils.log_utils import episodeLog_to_file, write_txt
+#from utils.airsim_plotting import draw_direction_arrow_2D
 
 
 
@@ -85,7 +85,6 @@ class EgaEnv(gym.Env):
             self.start, self.goal = self.reset_start(self.box_min, self.box_max)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
-        episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
         self.reset_episode_log(self.state, self.start)
         self.log_ep += 1
         self.episodeN += 1
@@ -136,7 +135,7 @@ class EgaEnv(gym.Env):
             done = True
             reward = -200.0 """
 
-        if distance2 < 1.5:
+        if distance2 < 1:
             done = True
             self.success += 1
             reward = 1200
@@ -192,7 +191,7 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5.0)
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (35, 35, -40), 3.0)
         print("Start:", start)
         print("Goal:", goal)
         return start, goal
