@@ -35,7 +35,8 @@ class EgaEnv(gym.Env):
         self.log_dir = os.path.join(dir, "episodeLogs")
         self.box_min = (-39.5, -39.5, 1.6)
         self.box_max = (39.5, 39.5, -40)
-        self.start, self.goal = self.reset_start(self.box_min, self.box_max)
+        self.rank = 0
+        self.start, self.goal = self.reset_start(self.box_min, self.box_max,self.rank)
         
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
@@ -57,7 +58,7 @@ class EgaEnv(gym.Env):
         self.stepN = 0
         self.client = None
         self.log_ep = 0 
-        self.success = 0
+        self.success = 0        
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         self.timer = time.time()
@@ -83,7 +84,9 @@ class EgaEnv(gym.Env):
             self.client = airsim_init(self.vehicle_name)
         if self.success >= 10:
             self.success = 0
-            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
+            self.rank += 1
+            print('+++++++++++++++++++++++++++++rank', self.rank)
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max, self.rank)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
         episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
@@ -135,13 +138,12 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-            print("Yehhhhhhhhhh you've done it!")
-            done = True
-            reward = -200.0 
+            
 
         if distance2 < 1.5:
             done = True
             self.success += 1
+            print('+++++++++++++++++++++++++++++success++++++++++++++++', self.success)
             reward = 1200
         
         self.addToLog('episodeN', int(self.episodeN))
@@ -190,8 +192,8 @@ class EgaEnv(gym.Env):
                 self.episodeLog[key] = []
             self.episodeLog[key].append(value)
             
-    def reset_start(self, box_min, box_max):
-        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5.0)
+    def reset_start(self, box_min, box_max, rank):
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5+rank*2)
         print("Start:", start)
         print("Goal:", goal)
         return start, goal

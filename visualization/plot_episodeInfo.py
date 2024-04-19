@@ -1,7 +1,7 @@
 from utils.data_filtering import filter_by_top_Nsteps, filter_by_top_reward, increment_sampling
 from utils.plot_utils import plot_2D, plot_3D, read_data
 for i in range(6):
-    file_path = f"/Users/noppa/Documents/AI_logs/multi_train/18.04.24-1254/episodeLogs/episodeLog_Drone{i}.txt"
+    file_path = f"/Users/noppa/Documents/AI_logs/multi_train/19.04.24-1725/episodeLogs/episodeLog_Drone{i}.txt"
     dat = read_data(file_path)
     # samples = filter_by_top_reward(dat, 16)
     # samples = increment_sampling(dat, 16)

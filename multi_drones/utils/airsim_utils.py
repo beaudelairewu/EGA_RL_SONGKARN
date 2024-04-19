@@ -58,8 +58,19 @@ def direction_based_navigation_2D(client, vehicle_name, action):
         airsim.DrivetrainType.ForwardOnly, airsim.YawMode(False, 0),
         vehicle_name=vehicle_name
     )
+    collided_with_drone = False
     while time.time() - start_time < action[2]:
         collisionInfo = client.simGetCollisionInfo(vehicle_name=vehicle_name)
-        if collisionInfo.has_collided == True:
+        if (collisionInfo.has_collided == True) and ("Drone" in collisionInfo.object_name):
+            print('=============collided with a drone but doesnt count lol',collisionInfo)
+            collided_with_drone = True
+            pass
+        elif (collisionInfo.has_collided == True) and ("Drone" not in collisionInfo.object_name):
             return collisionInfo
-    return collisionInfo
+    
+    if collided_with_drone == False:
+        return client.simGetCollisionInfo(vehicle_name=vehicle_name)
+    elif collided_with_drone == True:
+        collisionInfo = client.simGetCollisionInfo(vehicle_name=vehicle_name)
+        collisionInfo.has_collided = False
+        return collisionInfo
