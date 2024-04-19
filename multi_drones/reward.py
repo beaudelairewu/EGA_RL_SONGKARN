@@ -5,6 +5,10 @@ from utils.airsim_plotting import draw_text
 from utils.airsim_utils import to_vec3r
 import math
 from rich import print
+import os
+import datetime
+now = datetime.datetime.now()
+formatted_datetime = now.strftime("%d.%m.%y-%H%M")
 
 # reward as a result of taking actions
 def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_pos, client_id):
@@ -58,8 +62,48 @@ def computeReward(client, distance_before, distance_now, goal_rad, cur_pry, cur_
 
     if abs(distance_now - distance_before) < 0.001:
         r = r - 1.0
-        print("not moving  -1  ")
+        print(str(client_id)+"not moving  -1  ")
+    folder_path = r"C:\Users\noppa\Documents\GitHub\AI_logs\rewLogs\\" + formatted_datetime + "\\"
 
+    """ # Create the folder if it doesn't exist
+    try:
+        os.makedirs(folder_path)
+        print(f"Folder '{folder_path}' created successfully.")
+    except FileExistsError:
+        print(f"Folder '{folder_path}' already exists.")
+
+    # Define the data dictionary
+    data = {
+        "distance_diff": [distance_diff],
+        "before_track_diff": [before_track_diff],
+        "after_track_diff": [after_track_diff],
+        "distance_reward": [distance_rew],
+        "yaw_reward": [yaw_rew],
+        "reward": [r]
+    }
+
+    # Construct the file path
+    log_dir = folder_path + "data" + str(client_id) + ".xlsx"
+
+    # Check if the file exists
+    if not os.path.exists(log_dir):
+        # Create a new DataFrame with the data
+        df = pd.DataFrame(data)
+        # Write the DataFrame to an Excel file
+        df.to_excel(log_dir, index=False)
+        print(f"Excel file '{log_dir}' created successfully.")
+    else:
+        # Read the existing Excel file into a DataFrame
+        existing_df = pd.read_excel(log_dir)
+        print(f"Excel file '{log_dir}' already exists.")
+        # Create a new DataFrame with the data
+        new_df = pd.DataFrame(data)
+        # Concatenate the existing DataFrame and the new DataFrame
+        df = pd.concat([existing_df, new_df], ignore_index=True)
+
+        # Write the concatenated DataFrame back to the Excel file
+        df.to_excel(log_dir, index=False)
+        print(f"Data appended to '{log_dir}' successfully.") """
     return r 
 
 

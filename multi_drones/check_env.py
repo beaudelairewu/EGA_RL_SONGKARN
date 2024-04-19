@@ -4,7 +4,7 @@ from ega_env import EgaEnv
 import datetime
 import os
 
-base_dir = "/Users/prc-gc-macmini01/Documents/AI_logs/multi_train"
+base_dir = "/Users/noppa/Documents/AI_logs/multi_train"
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%d.%m.%y-%H%M") #02.04.24-1035 
 dir = os.path.join(base_dir, formatted_datetime)

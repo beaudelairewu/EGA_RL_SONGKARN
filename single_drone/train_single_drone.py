@@ -12,6 +12,8 @@ dir = make_episodeLog_folder() #'/Users/noppa/Documents/AI_logs/02.04.24-1035 '
 tmp_path = os.path.join(dir, "infoLogs")
 new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
 
+tmp_path = os.path.join(dir, "infoLogs")
+new_logger = configure(tmp_path, ["stdout", "csv", "tensorboard"])
 
 # Save a checkpoint every 1000 steps
 checkpoint_callback = CheckpointCallback(

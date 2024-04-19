@@ -33,7 +33,6 @@ class EgaEnv(gym.Env):
         self.client_id = client_id
         self.vehicle_name = f"Drone{client_id}"
         self.log_dir = os.path.join(dir, "episodeLogs")
-        # self.log_dir = f"train/{date_time}/logs{date_time}"
         self.box_min = (-39.5, -39.5, 1.6)
         self.box_max = (39.5, 39.5, -40)
         self.start, self.goal = self.reset_start(self.box_min, self.box_max)
@@ -48,16 +47,17 @@ class EgaEnv(gym.Env):
         })
         
         self.action_space = spaces.Box( 
-            low=np.array([-1, -1, -1]),  # low=np.array([-3.14, 3, 1]) vx, vy, duration
-            high=np.array([1, 1, 1])    # high=np.array([3.14, 5, 3]) 
+            low=np.array([-1, -1, -1]),  # vx vy vz
+            high=np.array([1, 1, 1])    # 
         )
-        
+
         self.state = {}
         self.episodeLog = {}
         self.episodeN = 0
         self.stepN = 0
         self.client = None
         self.log_ep = 0 
+        self.success = 0
         self.reset_state(self.start, self.goal)
         self.reset_episode_log(self.state, self.start)
         self.timer = time.time()
@@ -66,13 +66,13 @@ class EgaEnv(gym.Env):
             0: "red",
             1: "green",
             2: "blue",
-            3: "yellow",
-            4: "cyan",
-            5: "magenta",
-            6: "blue3",
-            7: "blue_violet",
-            8: "light_slate_grey",
-            9: "deep_pink4" 
+            3: "white",
+            4: "yellow",
+            5: "cyan",
+            6: "orange",
+            7: "purple",
+            8: "red",
+            9: "green"
         }
         
         
@@ -81,6 +81,9 @@ class EgaEnv(gym.Env):
         self.client = airsim.MultirotorClient()
         if self.episodeN == 0:
             self.client = airsim_init(self.vehicle_name)
+        if self.success >= 10:
+            self.success = 0
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
         episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
@@ -117,13 +120,13 @@ class EgaEnv(gym.Env):
         #compute reward as a result of taking action
         if collisionInfo.has_collided:
             done = True
-            reward = -200.0
+            reward = -400.0
             print(f"collided")
             print(f"object:     {collisionInfo.object_name}")
         elif out_of_box:
             print("out of box")
             done = True
-            reward = -0
+            reward = -200
         else:
             done = False
             #compute reward here
@@ -132,9 +135,13 @@ class EgaEnv(gym.Env):
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
 
-        if distance2 < 3:
             print("Yehhhhhhhhhh you've done it!")
             done = True
+            reward = -200.0 
+
+        if distance2 < 1.5:
+            done = True
+            self.success += 1
             reward = 1200
         
         self.addToLog('episodeN', int(self.episodeN))
@@ -155,7 +162,6 @@ class EgaEnv(gym.Env):
             "goal_direction": np.array([goal_rad], dtype=np.float32)
         }
         
-               
         return self.state, float(reward), done, False, self.state
             
     def reset_state(self, start, goal):
@@ -185,9 +191,7 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        a, b = spawn_random_position_xy(box_min, box_max)
-        c, d = spawn_random_position_xy(box_min, box_max)
-        start = (a, b, -4.0)
-        goal = (38, 38, -4.0)
-        
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5.0)
+        print("Start:", start)
+        print("Goal:", goal)
         return start, goal

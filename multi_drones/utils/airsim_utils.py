@@ -36,15 +36,13 @@ def get_pitch_roll_yaw(client, vehicle_name) -> tuple:
     return airsim.to_eularian_angles(ori) #pitch roll yaw (rad)
 
 def take_action(client, action, vehicle_name):
-    client.moveByVelocityZAsync(
-        float(action[0]),
-        float(action[1]),
-        -7,
-        float(action[2]),
-        airsim.DrivetrainType.ForwardOnly,
-        airsim.YawMode(False, 0),
-        vehicle_name=vehicle_name
-    )
+    client.moveByMotorPWMsAsync(
+        front_right_pwm = float(action[0]), 
+        rear_left_pwm = float(action[1]), 
+        front_left_pwm = float(action[2]), 
+        rear_right_pwm = float(action[3]), 
+        duration = 0.01, 
+        vehicle_name = vehicle_name)
 
 def direction_based_navigation_2D(client, vehicle_name, action):
     #action[0] desired yaw_angle (radian) [-3.14, 3.14]
