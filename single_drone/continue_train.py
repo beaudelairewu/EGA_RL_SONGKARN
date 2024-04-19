@@ -43,7 +43,7 @@ model_path = os.path.join(base_dir, "checkpoints",  continue_from)
 
 if __name__ == "__main__":
         # model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
-    model = PPO.load(model_path, EgaEnv(dir), verbose=1, n_steps=2048, batch_size=64, ent_coef=0.01)
+    model = PPO.load(model_path, EgaEnv(dir), verbose=1, n_steps=2048, batch_size=512, ent_coef=0.01)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
 

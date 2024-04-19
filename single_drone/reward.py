@@ -16,11 +16,11 @@ def computeReward(client, episodeLog, distance_before, distance_now, goal_rad, c
     distance_diff = distance_before - distance_now # if closer + , further -
 
     yaw_rew = yaw_reward(before_track_diff,after_track_diff)
-    distance_rew = 10 * distance_diff - distance_now
+    distance_rew = 10 * distance_diff
 
     # dis_rew = distance_reward(distance_diff, 10, distance_now)
 
-    r +=  yaw_rew
+    #r +=  yaw_rew
     r +=  distance_rew
 
     if abs(distance_now - distance_before) < 0.001:
