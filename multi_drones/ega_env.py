@@ -136,7 +136,7 @@ class EgaEnv(gym.Env):
             done = True
             reward = -200.0 """
 
-        if distance2 < 1.5:
+        if distance2 < 1:
             done = True
             self.success += 1
             reward = 1200
@@ -192,7 +192,7 @@ class EgaEnv(gym.Env):
             self.episodeLog[key].append(value)
             
     def reset_start(self, box_min, box_max):
-        start, goal = spawn_random_position_xy((-35, -35, 1.6), (5.5, 35, -40), 5.0)
+        start, goal = spawn_random_position_xy((-35, -35, 1.6), (35, 35, -40), 3.0)
         print("Start:", start)
         print("Goal:", goal)
         return start, goal
