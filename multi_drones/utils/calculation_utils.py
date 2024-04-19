@@ -21,12 +21,23 @@ def is_out_of_box(now: tuple, min: tuple, max: tuple) -> bool:
     else:
         return True
 
-def spawn_random_position_xy(min: tuple, max: tuple) -> tuple:
-    x_min, y_min, z_min = min
-    x_max, y_max, z_max = max
-    rand_x = random.uniform(x_min, x_max)
-    rand_y = random.uniform(y_min, y_max)
-    return (rand_x, rand_y)
+def spawn_random_position_xy(min_pos: tuple, max_pos: tuple, max_distance: float) -> tuple:
+    x_min, y_min, z_min = min_pos
+    x_max, y_max, z_max = max_pos
+    
+    while True:
+        start_x = random.uniform(-2.5, 2.5)
+        start_y = random.uniform(-2.5, 2.5)
+        
+        # Generate goal position excluding specified range
+        goal_x = random.uniform(x_min, x_max)
+        goal_y = random.uniform(y_min, y_max)
+        while -34.5 <= goal_x <= 34.5 and -34.5 <= goal_y <= 34.5:
+            goal_x = random.uniform(x_min, x_max)
+            goal_y = random.uniform(y_min, y_max)
+        
+        
+        return ((start_x, start_y, -4.0), (goal_x, goal_y, -4.0))
 
 def distance_2d(point1: tuple, point2: tuple) -> float:
     x1, y1 = point1
