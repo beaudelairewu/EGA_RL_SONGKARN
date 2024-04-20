@@ -5,13 +5,12 @@ from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3.ppo import PPO
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.logger import configure
-from stable_baselines3.common.vec_env import VecMonitor 
-
+from stable_baselines3.common.vec_env import VecMonitor
 import datetime
 import os
 import sys
 
-continue_from = "cur1_1304_185000_steps"
+continue_from = "cur1_1304_325000_steps"
 pref = continue_from.split("_")[0]
 
 base_dir = "/Users/EGA/Documents/AI_logs/"
@@ -43,7 +42,7 @@ model_path = os.path.join(base_dir, "checkpoints",  continue_from)
 
 if __name__ == "__main__":
         # model = PPO("MultiInputPolicy", envs, n_steps=1024, batch_size=64) #n_steps=2048, batch_size=64)
-    model = PPO.load(model_path, EgaEnv(dir), verbose=1, n_steps=2048, batch_size=512, ent_coef=0.01)
+    model = PPO.load(model_path, EgaEnv(dir), verbose=1, n_steps=2048, batch_size=512)
     model.set_logger(new_logger)
     model.learn(total_timesteps=1500000, progress_bar=True, callback=checkpoint_callback, reset_num_timesteps=False)
 

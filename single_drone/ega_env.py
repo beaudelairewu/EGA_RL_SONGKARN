@@ -35,7 +35,8 @@ class EgaEnv(gym.Env):
         airsim_init(self.vehicle_name)
         self.box_min = (-39.5, -39.5, 1.6)
         self.box_max = (39.5, 39.5, -40)
-        self.start, self.goal = self.reset_start(self.box_min, self.box_max)
+        self.rank = 0
+        self.start, self.goal = self.reset_start(self.box_min, self.box_max, self.rank)
         
         self.observation_space = spaces.Dict({
             "depth_image": spaces.Box(low=0, high=255, shape=(56, 100, 1), dtype=np.uint8), 
@@ -65,7 +66,8 @@ class EgaEnv(gym.Env):
         print(f"resetting env ------------------------ {self.vehicle_name}----------------------------")
         if self.success >= 10:
             self.success = 0
-            self.start, self.goal = self.reset_start(self.box_min, self.box_max)
+            self.rank += 1
+            self.start, self.goal = self.reset_start(self.box_min, self.box_max, self.rank)
         airsim_setpose(self.client, self.start, self.vehicle_name)
         self.reset_state(self.start, self.goal)
         episodeLog_to_file(f"{self.episodeLog}", self.log_dir, self.vehicle_name, self.log_ep, self.episodeN)
@@ -96,7 +98,8 @@ class EgaEnv(gym.Env):
         #check if drone is out of training area
         out_of_box = is_out_of_box(cur_pos, self.box_min, self.box_max)
         action_length = len(self.episodeLog.get('action',[]))
-        print('==============action_length==============',action_length)
+        distance_threshold = (5+(self.rank*2))+7
+        print('==============distance threshold==============',distance_threshold)
         #compute reward as a result of taking action
         if collisionInfo.has_collided:
             done = True
@@ -114,8 +117,11 @@ class EgaEnv(gym.Env):
             # print(f"distance_from_goal:  {distance}     ")
             # print(f"reward_step:  {reward}      ")
             # print(f"step  {self.stepN}")
-
-        if distance2 < 1:
+        if distance2 > distance_threshold:
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!wrong way son the goal is ', distance2 ,' m away\nyou shouldnt be more than ', distance_threshold,'away!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+            done = True
+            reward = -100
+        if distance2 < 3:
             print("Yehhhhhhhhhh you've done it!")
             done = True
             self.success += 1
@@ -146,7 +152,7 @@ class EgaEnv(gym.Env):
             "goal_direction": np.array([goal_rad], dtype=np.float32)
         }
         
-               
+        print('=============\n',self.vehicle_name,'\nsuccess ',self.success,'\nrank', self.rank,'\n====================')
         return self.state, float(reward), done, False, self.state
             
     def reset_state(self, start, goal):
@@ -176,8 +182,8 @@ class EgaEnv(gym.Env):
                 self.episodeLog[key] = []
             self.episodeLog[key].append(value)
             
-    def reset_start(self, box_min, box_max):
-        start, goal = spawn_random_position_xy((-35, -35, 1.6), (35, 35, -40), 3)
+    def reset_start(self, box_min, box_max, rank):
+        start, goal = spawn_random_position_xy((-38, -38, 1.6), (38, 38, -40), 5+rank*2)
         print("Start:", start)
         print("Goal:", goal)
         return start, goal
